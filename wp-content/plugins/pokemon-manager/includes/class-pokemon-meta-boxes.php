@@ -45,5 +45,27 @@ class Pokemon_Meta_Boxes {
     }
 
     public function save_post_data($post_id) {
+        // Check nonce for security
+        if (!isset($_POST['pokemon_meta_box_nonce']) || !wp_verify_nonce($_POST['pokemon_meta_box_nonce'], 'pokemon_save_data')) {
+            return;
+        }
+
+        // Check if not autosave
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        // Check permissions
+        if ('pokemon' !== $_POST['post_type'] || !current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        // Save meta data
+        update_post_meta($post_id, '_primary_type', sanitize_text_field($_POST['primary_type']));
+        update_post_meta($post_id, '_secondary_type', sanitize_text_field($_POST['secondary_type']));
+        update_post_meta($post_id, '_weight', sanitize_text_field($_POST['weight']));
+        update_post_meta($post_id, '_old_pokedex_number', sanitize_text_field($_POST['old_pokedex_number']));
+        update_post_meta($post_id, '_recent_pokedex_number', sanitize_text_field($_POST['recent_pokedex_number']));
+        update_post_meta($post_id, '_attacks', sanitize_textarea_field($_POST['attacks']));
     }
 }
