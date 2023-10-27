@@ -28,3 +28,19 @@ function enqueue_pokemon_manager_scripts() {
 }
 
 add_action('admin_enqueue_scripts', 'enqueue_pokemon_manager_scripts');
+
+function single_pokemon_template($single_template) {
+    global $post;
+
+    if ($post->post_type == 'pokemon') {
+        if ( $override = locate_template( 'single-pokemon.php' ) ) {
+            $single_template = $override;
+        } else {
+            $single_template = plugin_dir_path(__FILE__) . 'templates/single-pokemon.php';
+        }
+    }
+
+    return $single_template;
+}
+
+add_filter('single_template', 'single_pokemon_template');
