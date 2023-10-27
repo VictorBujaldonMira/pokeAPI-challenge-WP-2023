@@ -44,3 +44,10 @@ function single_pokemon_template($single_template) {
 }
 
 add_filter('single_template', 'single_pokemon_template');
+
+function enqueue_styles_and_scripts(){
+    wp_register_style('pokemon-style', plugin_dir_url(__FILE__) . 'assets/css/dist/app.min.css', array(), '1.0');
+    wp_enqueue_style('pokemon-style');
+}
+
+add_action('wp_enqueue_scripts', 'enqueue_styles_and_scripts');
