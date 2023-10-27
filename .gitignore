@@ -26,6 +26,7 @@ wp-content/maintenance/
 wp-content/maintenance.php
 wp-content/upgrade/
 wp-content/wp-cache-config.php
+wp-content/plugins/pokemon-manager/assets/js/dist/pokemon-admin.js
 
 pinfo.php
 .idea
