@@ -19,7 +19,6 @@ class Pokemon_Meta_Boxes {
         $weight = get_post_meta($post->ID, '_weight', true);
         $old_pokedex_number = get_post_meta($post->ID, '_old_pokedex_number', true);
         $recent_pokedex_number = get_post_meta($post->ID, '_recent_pokedex_number', true);
-        $attacks = get_post_meta($post->ID, '_attacks', true);
 
         // Nonce for verification
         wp_nonce_field('pokemon_save_data', 'pokemon_meta_box_nonce');
@@ -40,8 +39,30 @@ class Pokemon_Meta_Boxes {
         echo '<label for="recent_pokedex_number">Recent Pokedex Number:</label>';
         echo '<input type="text" id="recent_pokedex_number" name="recent_pokedex_number" value="' . esc_attr($recent_pokedex_number) . '"><br>';
 
-        echo '<label for="attacks">Attacks (JSON format):</label>';
-        echo '<textarea id="attacks" name="attacks" rows="5" cols="50">' . esc_textarea($attacks) . '</textarea>';
+        echo '<div id="attacks_container">';
+
+        if(empty(unserialize(get_post_meta($post->ID, "_attacks", true)))){
+            echo '<div class="attack_field_group">';
+            echo '<label for="attacks[0][name]">Attack Name:</label>';
+            echo '<input type="text" id="attacks[0][name]" name="attacks[0][name]">';
+
+            echo '<label for="attacks[0][description]">Attack Description:</label>';
+            echo '<input type="text" id="attacks[0][description]" name="attacks[0][description]">';
+            echo '</div>'; // .attack_field_group
+        }else{
+            $array_data = unserialize(get_post_meta($post->ID, "_attacks", true));
+
+            foreach ($array_data as $key => $item) {
+                echo '<div class="attack_field_group">';
+                echo '<input type="text" id="attacks['.$key.'][name]" name="attacks['.$key.'][name]" value="' . $item['name'] . '">';
+
+                echo '<input type="text" id="attacks['.$key.'][description]" name="attacks['.$key.'][description]" value="' . $item['description'] . '">';
+                echo '</div>'; // .attack_field_group
+            }
+        }
+        echo '</div>'; // #attacks_container
+
+        echo '<button type="button" id="add_attack">Add Another Attack</button>';
     }
 
     public function save_post_data($post_id) {
@@ -66,6 +87,8 @@ class Pokemon_Meta_Boxes {
         update_post_meta($post_id, '_weight', sanitize_text_field($_POST['weight']));
         update_post_meta($post_id, '_old_pokedex_number', sanitize_text_field($_POST['old_pokedex_number']));
         update_post_meta($post_id, '_recent_pokedex_number', sanitize_text_field($_POST['recent_pokedex_number']));
-        update_post_meta($post_id, '_attacks', sanitize_textarea_field($_POST['attacks']));
+
+        $attacks = isset($_POST['attacks']) && is_array($_POST['attacks']) ? $_POST['attacks'] : array();
+        update_post_meta($post_id, '_attacks', maybe_serialize($attacks));
     }
 }
