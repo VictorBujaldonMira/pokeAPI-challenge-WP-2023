@@ -22,3 +22,9 @@ function init_pokemon_manager() {
 }
 
 add_action('plugins_loaded', 'init_pokemon_manager');
+
+function enqueue_pokemon_manager_scripts() {
+    wp_enqueue_script('pokemon-admin', plugin_dir_url(__FILE__) . 'assets/js/dist/pokemon-admin.js', array('jquery'), '1.0', true);
+}
+
+add_action('admin_enqueue_scripts', 'enqueue_pokemon_manager_scripts');
