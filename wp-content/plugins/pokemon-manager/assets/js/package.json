@@ -1,0 +1,16 @@
+{
+  "name": "typescript",
+  "version": "1.0.0",
+  "description": "# Initial commit and .gitignore",
+  "main": "index.js",
+  "dependencies": {
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "config": "tsc --init",
+    "compile": "tsc"
+  },
+  "author": "",
+  "license": "ISC"
+}
