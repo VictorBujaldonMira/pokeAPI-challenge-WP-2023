@@ -13,65 +13,55 @@ class Pokemon_Meta_Boxes {
     }
 
     public function display_meta_boxes($post) {
-        // Fetch current meta values
-        $primary_type = get_post_meta($post->ID, '_primary_type', true);
-        $secondary_type = get_post_meta($post->ID, '_secondary_type', true);
-        $weight = get_post_meta($post->ID, '_weight', true);
-        $old_pokedex_number = get_post_meta($post->ID, '_old_pokedex_number', true);
-        $old_pokedex_name = get_post_meta($post->ID, '_old_pokedex_name', true);
-        $recent_pokedex_number = get_post_meta($post->ID, '_recent_pokedex_number', true);
-        $recent_pokedex_name = get_post_meta($post->ID, '_recent_pokedex_name', true);
+        // Fetch all post meta data at once
+        $meta_data = get_post_meta($post->ID);
 
         // Nonce for verification
         wp_nonce_field('pokemon_save_data', 'pokemon_meta_box_nonce');
 
-        // Display the fields
-        echo '<label for="primary_type">Primary Type:</label>';
-        echo '<input type="text" id="primary_type" name="primary_type" value="' . esc_attr($primary_type) . '"><br>';
+        // Define fields and their respective labels
+        $fields = [
+            'primary_type' => 'Primary Type',
+            'secondary_type' => 'Secondary Type',
+            'weight' => 'Weight',
+            'old_pokedex_number' => 'Old Pokedex Number',
+            'old_pokedex_name' => 'Old Pokedex Game',
+            'recent_pokedex_number' => 'Recent Pokedex Number',
+            'recent_pokedex_name' => 'Recent Pokedex Game',
+        ];
 
-        echo '<label for="secondary_type">Secondary Type:</label>';
-        echo '<input type="text" id="secondary_type" name="secondary_type" value="' . esc_attr($secondary_type) . '"><br>';
+        $output = '';
 
-        echo '<label for="weight">Weight:</label>';
-        echo '<input type="text" id="weight" name="weight" value="' . esc_attr($weight) . '"><br>';
+        foreach ($fields as $field => $label) {
+            $value = isset($meta_data["_$field"]) ? esc_attr($meta_data["_$field"][0]) : '';
+            $output .= '<label for="' . $field . '">' . $label . ':</label>';
+            $output .= '<input type="text" id="' . $field . '" name="' . $field . '" value="' . $value . '"><br>';
+        }
 
-        echo '<label for="old_pokedex_number">Old Pokedex Number:</label>';
-        echo '<input type="text" id="old_pokedex_number" name="old_pokedex_number" value="' . esc_attr($old_pokedex_number) . '"><br>';
-
-        echo '<label for="old_pokedex_game">Old Pokedex Game:</label>';
-        echo '<input type="text" id="old_pokedex_name" name="old_pokedex_name" value="' . esc_attr($old_pokedex_name) . '"><br>';
-
-        echo '<label for="recent_pokedex_number">Recent Pokedex Number:</label>';
-        echo '<input type="text" id="recent_pokedex_number" name="recent_pokedex_number" value="' . esc_attr($recent_pokedex_number) . '"><br>';
-
-        echo '<label for="recent_pokedex_name">Recent Pokedex Game:</label>';
-        echo '<input type="text" id="recent_pokedex_name" name="recent_pokedex_name" value="' . esc_attr($recent_pokedex_name) . '"><br>';
-
-        echo '<div id="attacks_container">';
+        $output .= '<div id="attacks_container">';
 
         // Load the attacks if exists
         if(empty(unserialize(get_post_meta($post->ID, "_attacks", true)))){
-            echo '<div class="attack_field_group">';
-            echo '<label for="attacks[0][name]">Attack Name:</label>';
-            echo '<input type="text" id="attacks[0][name]" name="attacks[0][name]">';
-
-            echo '<label for="attacks[0][description]">Attack Description:</label>';
-            echo '<input type="text" id="attacks[0][description]" name="attacks[0][description]">';
-            echo '</div>'; // .attack_field_group
+            $output .= $this->generateAttackField();
         }else{
             $array_data = unserialize(get_post_meta($post->ID, "_attacks", true));
 
             foreach ($array_data as $key => $item) {
-                echo '<div class="attack_field_group">';
-                echo '<input type="text" id="attacks['.$key.'][name]" name="attacks['.$key.'][name]" value="' . $item['name'] . '">';
-
-                echo '<input type="text" id="attacks['.$key.'][description]" name="attacks['.$key.'][description]" value="' . $item['description'] . '">';
-                echo '</div>'; // .attack_field_group
+                $output .= $this->generateAttackField($key, $item['name'], $item['description']);
             }
         }
-        echo '</div>'; // #attacks_container
 
-        echo '<button type="button" id="add_attack">Add Another Attack</button>';
+        $output .= '</div>'; // #attacks_container
+        $output .= '<button type="button" id="add_attack">Add Another Attack</button>';
+
+        echo $output;
+    }
+
+    private function generateAttackField($index = 0, $nameValue = '', $descriptionValue = '') {
+        return '<div class="attack_field_group">
+            <input type="text" id="attacks[' . $index . '][name]" name="attacks[' . $index . '][name]" value="' . esc_attr($nameValue) . '">
+            <input type="text" id="attacks[' . $index . '][description]" name="attacks[' . $index . '][description]" value="' . esc_attr($descriptionValue) . '">
+        </div>';
     }
 
     public function save_post_data($post_id) {
