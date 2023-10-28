@@ -17,6 +17,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-pokemon-meta-boxes.php'
 require_once plugin_dir_path(__FILE__) . 'includes/class-pokemon-ajax.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-pokemon-shortcodes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-pokemon-redirect.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-pokemon-generator.php';
 
 // On plugin load, initialize classes
 function init_pokemon_manager() {
