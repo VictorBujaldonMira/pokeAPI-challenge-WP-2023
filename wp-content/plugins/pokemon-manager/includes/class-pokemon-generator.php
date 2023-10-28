@@ -60,6 +60,17 @@ class Pokemon_Generator {
             $secondary_type = null;
         }
 
+        $abilities = [];
+        foreach ($pokemon_data['abilities'] as $ability_data) {
+            $ability_name = $ability_data['ability']['name'];
+            $ability_effect = $this->fetch_ability_effect($ability_data['ability']['url']);
+
+            $abilities[] = [
+                'name' => $ability_name,
+                'description' => $ability_effect
+            ];
+        }
+
         return [
             'name' => $pokemon_data['forms'][0]['name'],
             'description' => $species_data['flavor_text_entries'][0]['flavor_text'],
@@ -71,6 +82,7 @@ class Pokemon_Generator {
             'old_pokedex_name' => $old_game_name,
             'new_pokedex_number' => $new_game_index,
             'new_pokedex_name' => $new_game_name,
+            'abilities' => $abilities
         ];
     }
 
@@ -96,6 +108,7 @@ class Pokemon_Generator {
             update_post_meta($post_id, '_old_pokedex_name', sanitize_text_field($data['old_pokedex_name']));
             update_post_meta($post_id, '_recent_pokedex_number', sanitize_text_field($data['new_pokedex_number']));
             update_post_meta($post_id, '_recent_pokedex_name', sanitize_text_field($data['new_pokedex_name']));
+            update_post_meta($post_id, '_attacks', maybe_serialize($data['abilities']));
         }
 
         return $post_id;
@@ -122,6 +135,17 @@ class Pokemon_Generator {
         wp_update_attachment_metadata($attachment_id, $attachment_metadata);
 
         return $attachment_id;
+    }
+
+    private function fetch_ability_effect($url) {
+        $response = wp_remote_get($url);
+
+        if (is_wp_error($response)) {
+            return null;
+        }
+
+        $ability_data = json_decode(wp_remote_retrieve_body($response), true);
+        return $ability_data['effect_entries'][1]['short_effect'] ?? null;
     }
 }
 
