@@ -27,6 +27,7 @@ wp-content/maintenance.php
 wp-content/upgrade/
 wp-content/wp-cache-config.php
 wp-content/plugins/pokemon-manager/assets/js/dist/pokemon-admin.js
+wp-content/plugins/pokemon-manager/assets/js/dist/pokemon-ajax.js
 wp-content/plugins/pokemon-manager/assets/css/dist/app.min.css
 wp-content/plugins/pokemon-manager/assets/css/dist/main.js
 
