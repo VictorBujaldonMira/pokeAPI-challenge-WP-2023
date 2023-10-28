@@ -18,7 +18,9 @@ class Pokemon_Meta_Boxes {
         $secondary_type = get_post_meta($post->ID, '_secondary_type', true);
         $weight = get_post_meta($post->ID, '_weight', true);
         $old_pokedex_number = get_post_meta($post->ID, '_old_pokedex_number', true);
+        $old_pokedex_name = get_post_meta($post->ID, '_old_pokedex_name', true);
         $recent_pokedex_number = get_post_meta($post->ID, '_recent_pokedex_number', true);
+        $recent_pokedex_name = get_post_meta($post->ID, '_recent_pokedex_name', true);
 
         // Nonce for verification
         wp_nonce_field('pokemon_save_data', 'pokemon_meta_box_nonce');
@@ -36,11 +38,18 @@ class Pokemon_Meta_Boxes {
         echo '<label for="old_pokedex_number">Old Pokedex Number:</label>';
         echo '<input type="text" id="old_pokedex_number" name="old_pokedex_number" value="' . esc_attr($old_pokedex_number) . '"><br>';
 
+        echo '<label for="old_pokedex_game">Old Pokedex Game:</label>';
+        echo '<input type="text" id="old_pokedex_name" name="old_pokedex_name" value="' . esc_attr($old_pokedex_name) . '"><br>';
+
         echo '<label for="recent_pokedex_number">Recent Pokedex Number:</label>';
         echo '<input type="text" id="recent_pokedex_number" name="recent_pokedex_number" value="' . esc_attr($recent_pokedex_number) . '"><br>';
 
+        echo '<label for="recent_pokedex_name">Recent Pokedex Game:</label>';
+        echo '<input type="text" id="recent_pokedex_name" name="recent_pokedex_name" value="' . esc_attr($recent_pokedex_name) . '"><br>';
+
         echo '<div id="attacks_container">';
 
+        // Load the attacks if exists
         if(empty(unserialize(get_post_meta($post->ID, "_attacks", true)))){
             echo '<div class="attack_field_group">';
             echo '<label for="attacks[0][name]">Attack Name:</label>';
@@ -86,7 +95,9 @@ class Pokemon_Meta_Boxes {
         update_post_meta($post_id, '_secondary_type', sanitize_text_field($_POST['secondary_type']));
         update_post_meta($post_id, '_weight', sanitize_text_field($_POST['weight']));
         update_post_meta($post_id, '_old_pokedex_number', sanitize_text_field($_POST['old_pokedex_number']));
+        update_post_meta($post_id, '_old_pokedex_name', sanitize_text_field($_POST['old_pokedex_name']));
         update_post_meta($post_id, '_recent_pokedex_number', sanitize_text_field($_POST['recent_pokedex_number']));
+        update_post_meta($post_id, '_recent_pokedex_name', sanitize_text_field($_POST['recent_pokedex_name']));
 
         $attacks = isset($_POST['attacks']) && is_array($_POST['attacks']) ? $_POST['attacks'] : array();
         update_post_meta($post_id, '_attacks', maybe_serialize($attacks));
