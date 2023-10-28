@@ -14,8 +14,9 @@ if (have_posts()):
         echo '<p>' . get_the_content() . '</p>';
         echo '<div class="pokemon__data">';
         echo '<span class="font-weight-bold">Weight: </span><span>' . esc_html(get_post_meta(get_the_ID(), '_weight', true)) . '</span><br>';
-        echo '<span class="font-weight-bold">Old Pokedex Number: </span><span>' . esc_html(get_post_meta(get_the_ID(), '_old_pokedex_number', true)) . '</span><br>';
         echo '<span class="font-weight-bold">Recent Pokedex Number: </span><span>' . esc_html(get_post_meta(get_the_ID(), '_recent_pokedex_number', true)) . '</span><br>';
+        echo '<button id="load-pokedex-old" class="btn btn-success" data-post-id="'. get_the_ID() .'">Show Oldest Pokedex Number</button>';
+        echo '<div id="old-pokedex-result"></div>';
 
         if ($attacks && is_array($attacks)) {
             echo '<h2 class="mt-3">Attacks</h2>';
