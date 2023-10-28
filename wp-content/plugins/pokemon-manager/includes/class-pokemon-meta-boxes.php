@@ -80,16 +80,27 @@ class Pokemon_Meta_Boxes {
             return;
         }
 
-        // Save meta data
-        update_post_meta($post_id, '_primary_type', sanitize_text_field($_POST['primary_type']));
-        update_post_meta($post_id, '_secondary_type', sanitize_text_field($_POST['secondary_type']));
-        update_post_meta($post_id, '_weight', sanitize_text_field($_POST['weight']));
-        update_post_meta($post_id, '_old_pokedex_number', sanitize_text_field($_POST['old_pokedex_number']));
-        update_post_meta($post_id, '_old_pokedex_name', sanitize_text_field($_POST['old_pokedex_name']));
-        update_post_meta($post_id, '_recent_pokedex_number', sanitize_text_field($_POST['recent_pokedex_number']));
-        update_post_meta($post_id, '_recent_pokedex_name', sanitize_text_field($_POST['recent_pokedex_name']));
+        // List of meta keys and their corresponding input names
+        $meta_keys = [
+            '_primary_type' => 'primary_type',
+            '_secondary_type' => 'secondary_type',
+            '_weight' => 'weight',
+            '_old_pokedex_number' => 'old_pokedex_number',
+            '_old_pokedex_name' => 'old_pokedex_name',
+            '_recent_pokedex_number' => 'recent_pokedex_number',
+            '_recent_pokedex_name' => 'recent_pokedex_name'
+        ];
 
-        $attacks = isset($_POST['attacks']) && is_array($_POST['attacks']) ? $_POST['attacks'] : array();
+        // Update post meta for each key
+        foreach ($meta_keys as $meta_key => $input_name) {
+            if (isset($_POST[$input_name])) {
+                $value = sanitize_text_field($_POST[$input_name]);
+                update_post_meta($post_id, $meta_key, $value);
+            }
+        }
+
+        // Handle attacks
+        $attacks = (isset($_POST['attacks']) && is_array($_POST['attacks'])) ? $_POST['attacks'] : [];
         update_post_meta($post_id, '_attacks', maybe_serialize($attacks));
     }
 }
