@@ -1,0 +1,21 @@
+#pokemon__type-filter{
+    display: flex;
+    option{
+        text-transform: capitalize;
+        margin: 15px 15px 15px 0;
+        display: inline-block;
+        padding: 5px 20px;
+        border-radius: 15px;
+        color: white;
+    }
+    &:hover{
+        cursor: pointer;
+    }
+}
+
+.pokemon__grid-list{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 20px;
+    row-gap: 20px;
+}
