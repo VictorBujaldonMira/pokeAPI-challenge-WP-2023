@@ -22,7 +22,9 @@ class Pokemon_Shortcodes {
             $query->the_post();
             $pokemon_image = get_the_post_thumbnail_url();
             $output .= '<div class="pokemon-item '.get_post_meta(get_the_ID(), '_primary_type', true) ." ". get_post_meta(get_the_ID(), '_secondary_type', true) .'">';
+            $output .= '<a href="'.get_permalink().'">';
             $output .= '<img src="' . $pokemon_image . '" alt="' . get_the_title() . '">';
+            $output .= '</a>';
             $output .= '</div>';
         }
 
