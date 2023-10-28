@@ -1,5 +1,4 @@
 <?php
-// En el archivo class-pokemon-shortcodes.php
 
 class Pokemon_Shortcodes {
 
@@ -8,9 +7,12 @@ class Pokemon_Shortcodes {
     }
 
     public function generate_pokemon_grid($atts) {
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
         $query_args = array(
             'post_type' => 'pokemon',
             'posts_per_page' => 6,
+            'paged' => $paged
         );
 
         $query = new WP_Query($query_args);
@@ -24,10 +26,25 @@ class Pokemon_Shortcodes {
             $output .= '</div>';
         }
 
-        $output .= '</div>';
+        $output .= '</div>'; // Ending #pokemon__grid
+        $output .= '</div>'; // Ending .pokemon__grid-list
+
+        $output .= '<div class="pokemon__pagination mt-4 mb-5">';
+
+        $big = 999999999;
+        $output .= paginate_links(array(
+            'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+            'format' => '?paged=%#%',
+            'current' => max(1, get_query_var('paged')),
+            'total' => $query->max_num_pages
+        ));
+
+        $output .= '</div>'; // Ending .pokemon__pagination
+
+        wp_reset_postdata();
+
         return $output;
     }
 }
-
 
 new Pokemon_Shortcodes();
