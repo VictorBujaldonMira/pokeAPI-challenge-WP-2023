@@ -2,21 +2,25 @@
 
 class Pokemon_Generator {
 
+    // Add the actions to redirect
     public function __construct() {
         add_action('init', array($this, 'add_generate_pokemon_rewrite_rule'));
         add_filter('query_vars', array($this, 'add_generate_pokemon_query_var'));
         add_action('template_redirect', array($this, 'generate_random_pokemon'));
     }
 
+    //  This method makes WordPress aware of the "/generate" URL endpoint and maps it to a custom query variable 'generate_pokemon'.
     public function add_generate_pokemon_rewrite_rule() {
         add_rewrite_rule('^generate/?', 'index.php?generate_pokemon=1', 'top');
     }
 
+    // This makes WordPress aware of the "/generate" URL endpoint and maps it to a custom query variable 'generate_pokemon'.
     public function add_generate_pokemon_query_var($query_vars) {
         $query_vars[] = 'generate_pokemon';
         return $query_vars;
     }
 
+    // Generates a random Pokemon and inserts it as a post in WordPress.
     public function generate_random_pokemon() {
         global $wp_query;
 
@@ -35,6 +39,12 @@ class Pokemon_Generator {
         }
     }
 
+    /**
+     * Fetches data for a specific Pokemon from an external API.
+     *
+     * @param int $id The ID of the Pokemon to fetch data for.
+     * @return array|false The fetched Pokemon data or false on error.
+     */
     private function fetch_pokemon_data($id) {
         $pokemon_endpoint = "https://pokeapi.co/api/v2/pokemon/{$id}";
         $species_endpoint = "https://pokeapi.co/api/v2/pokemon-species/{$id}";
@@ -86,6 +96,12 @@ class Pokemon_Generator {
         ];
     }
 
+    /**
+     * Inserts the provided Pokemon data as a post in WordPress.
+     *
+     * @param array $data The Pokemon data to insert.
+     * @return int|WP_Error The ID of the created post or a WP_Error on failure.
+     */
     private function insert_pokemon_as_post($data) {
         $post_id = wp_insert_post([
             'post_title' => sanitize_text_field($data['name']),
@@ -114,6 +130,13 @@ class Pokemon_Generator {
         return $post_id;
     }
 
+    /**
+     * Uploads an image from a given URL to the WordPress media library.
+     *
+     * @param string $image_url The URL of the image to upload.
+     * @param int $post_id The ID of the post the uploaded image should be attached to.
+     * @return int|false The ID of the uploaded image or false on error.
+     */
     private function upload_image_from_url($image_url, $post_id) {
         require_once(ABSPATH . 'wp-admin/includes/image.php');
 
@@ -137,6 +160,7 @@ class Pokemon_Generator {
         return $attachment_id;
     }
 
+    // Fetches effect data for a specific Pokemon ability from an external API.
     private function fetch_ability_effect($url) {
         $response = wp_remote_get($url);
 

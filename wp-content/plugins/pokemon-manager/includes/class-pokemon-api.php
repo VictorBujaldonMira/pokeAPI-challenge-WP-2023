@@ -2,22 +2,27 @@
 
 class Pokemon_REST_API {
 
+    // WordPress initialization of the REST API
     public function __construct() {
         add_action('rest_api_init', array($this, 'register_routes'));
     }
 
+    // Method to register custom routes for the REST API.
     public function register_routes() {
+        // Register a route to fetch the list of Pokémon.
         register_rest_route('pokemon', '/list', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_pokemon_list'),
         ));
 
+        // Register a route to fetch details of a specific Pokémon by its ID.
         register_rest_route('pokemon', '/details/(?P<id>\d+)', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_pokemon_details'),
         ));
     }
 
+    // Callback method to return a list of all Pokémon.
     public function get_pokemon_list() {
         $args = array(
             'post_type' => 'pokemon',
@@ -41,14 +46,17 @@ class Pokemon_REST_API {
         return $pokemon_list;
     }
 
+    // Callback method to return details of a specific Pokémon based on the provided ID.
     public function get_pokemon_details($data) {
         $post_id = $data['id'];
         $post = get_post($post_id);
 
+        // If the post is not found or the type is not "pokemon", return an error.
         if (!$post || $post->post_type !== 'pokemon') {
             return new WP_Error('no_post', 'Invalid Pokemon ID.', array('status' => 404));
         }
 
+        // Extract details from the post.
         $name = $post->post_title;
         $description = $post->post_content;
         $featured_image = get_the_post_thumbnail_url($post_id);
@@ -61,6 +69,7 @@ class Pokemon_REST_API {
         $recent_pokedex_name = get_post_meta($post->ID, '_recent_pokedex_name', true);
         $attacks = unserialize(get_post_meta($post->ID, "_attacks", true));
 
+        // Construct and return an array with all the extracted details.
         return array(
             'name' => $name,
             'description' => $description,

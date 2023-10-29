@@ -1,11 +1,12 @@
 <?php
 class Pokemon_Ajax {
-    // Load actions for ajax Wordpress
+    // Load actions for ajax Wordpress logged in users and not logged in
     public function __construct() {
         add_action('wp_ajax_load_old_pokedex', array($this, 'load_old_pokedex'));
         add_action('wp_ajax_nopriv_load_old_pokedex', array($this, 'load_old_pokedex'));
     }
 
+    // Method to handle AJAX request to load old Pokedex details.
     public function load_old_pokedex() {
         $post_id = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
 
@@ -20,11 +21,10 @@ class Pokemon_Ajax {
 
         // Send data in Json format in case of success
         if ($pokedex_num) {
-            $json = wp_send_json_success(array(
+            wp_send_json_success(array(
                 'pokedex_num' => $pokedex_num,
                 'game_version' => $game_version
             ));
-            var_dump($json);
         } else {
             wp_send_json_error();
         }

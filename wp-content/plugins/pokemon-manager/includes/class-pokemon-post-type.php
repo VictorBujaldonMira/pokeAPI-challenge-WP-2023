@@ -2,10 +2,12 @@
 
 class Pokemon_Post_Type {
 
+    // Action to register the code
     public function __construct() {
         add_action('init', array($this, 'register_post_type'));
     }
 
+    // Register the code
     public function register_post_type() {
         register_post_type('pokemon',
             array(
